@@ -53,8 +53,17 @@ No seriously, I'm sick of only having this one message to send...
   INFO
 }
 
-BOT.command :stats do |e|
-  Karma.stats e.author
+BOT.command :stats, max_args: 1 do |e, u|
+  member = e.author
+  member = BOT.parse_mention(u).on e.server if u
+  Karma.stats member
+end
+
+BOT.command :ranks, max_args: 1, usage: '`@Karma ranks [top]`' do |e, top|
+  users = Karma.ranking top: (top || 10)
+  users.each_with_index { |u,i|
+    e << "#{i+1}:  <@#{u[:id]}>"
+  }
 end
 
 BOT.command :help do

@@ -12,8 +12,8 @@ module Karma
 
 
   def set_emoji
-    @upvote_emoji   = "👆"
-    @downvote_emoji = "👇"
+    @upvote_emoji   = '👆'
+    @downvote_emoji = '👇'
     @upburst_emoji = '🌟'
     @downburst_emoji = '📛'
   end
