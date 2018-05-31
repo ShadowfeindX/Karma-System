@@ -1,0 +1,50 @@
+GIT
+  remote: https://github.com/meew0/discordrb.git
+  revision: 4274e084a9483b121cb1a6d8208c3d7e09911618
+  specs:
+    discordrb (3.2.1)
+      discordrb-webhooks (~> 3.2.0.1)
+      opus-ruby
+      rbnacl (~> 3.4.0)
+      rest-client (>= 2.1.0.rc1)
+      websocket-client-simple (>= 0.3.0)
+    discordrb-webhooks (3.2.0.1)
+      rest-client (>= 2.1.0.rc1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    domain_name (0.5.20180417)
+      unf (>= 0.0.5, < 1.0.0)
+    event_emitter (0.2.6)
+    ffi (1.9.23-java)
+    http-accept (1.7.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    netrc (0.11.0)
+    opus-ruby (1.0.1)
+      ffi
+    rbnacl (3.4.0)
+      ffi
+    rest-client (2.1.0.rc1)
+      http-accept (>= 1.7.0, < 2.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
+    unf (0.1.4-java)
+    websocket (1.2.8)
+    websocket-client-simple (0.3.0)
+      event_emitter
+      websocket
+
+PLATFORMS
+  java
+
+DEPENDENCIES
+  discordrb!
+
+BUNDLED WITH
+   1.16.2
