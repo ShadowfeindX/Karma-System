@@ -1,12 +1,20 @@
 module System
   extend self
   attr_reader :report_emoji
+  attr_accessor :roles
 
   @blacklist = {}
+  @roles = {}
 
   def init
+    p @roles
     @report_emoji  = '☢'
     @admin_channel = BOT.find_channel 'administration'
+  end
+
+  def induct(member, reason)
+    member.add_role @roles[:Member], reason
+    member.remove_role @roles[:Visitor], reason
   end
 
   def blacklisted?(message)

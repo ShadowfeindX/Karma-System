@@ -62,7 +62,10 @@ module Karma
       user[type] += calc_vote(event, user, type == :upvotes)
     end
 
-    user.merge! level: Rational(user[:upvotes], user[:downvotes])
+    level = Rational(user[:upvotes], user[:downvotes])
+    System.induct event.message.author, 'Karma level up!' if level > 1
+
+    user.merge! level: level
   end
 
   def upvotes(message)
