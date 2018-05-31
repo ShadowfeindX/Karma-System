@@ -128,7 +128,7 @@ module Karma
     bonus = up ? :up_bonus : :down_bonus
     user[bonus] = [user[bonus], karma_bonus].max
 
-    (1 * karma_strength * karma_bonus * prestige_bonus + karma_streak).to_i
+    1 * karma_strength * karma_bonus * prestige_bonus + karma_streak
   end
 
   def format_user(member, user)

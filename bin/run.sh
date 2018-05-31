@@ -2,4 +2,5 @@
 . setup.sh
 cd ..
 bundle install
-bundle exec ./setup.rb &
+nohup bundle exec ./setup.rb > bin/log &
+cd bin

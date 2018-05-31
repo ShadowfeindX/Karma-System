@@ -7,7 +7,6 @@ module System
   @roles = {}
 
   def init
-    p @roles
     @report_emoji  = '☢'
     @admin_channel = BOT.find_channel 'administration'
   end

@@ -42,15 +42,60 @@ BOT.message_delete { |event|
   System.clear(event.id) if System.blacklisted? event.id
 }
 
-
 BOT.pm { |event|
+$history ||= {}
+
+  if $history[event.channel.id]
+    case event.content.to_sym
+    when :about
+      event << 'Our lord and savior, the gracious admin, **shadow** has documented the entirety of my specs here:'
+      event << 'https://github.com/ShadowfeindX/Karma-System/blob/master/README.md'
+    when :source
+      event << 'You can find the perpetual spaghetti that is my internal organs sprawled across this repo:'
+      event << 'https://github.com/ShadowfeindX/Karma-System'
+    when :creator
+      event << '~~Who cares about that lazy asshole.~~'
+      event << 'My precious creator goes by the name of **shadow** aka **ShadowfeindX**.'
+      event << 'You can view more of his ~~abominations~~ projects here:'
+      event << 'https://github.com/ShadowfeindX'
+    when :backstory
+      event << '**I was a real boy!**'
+      event << '*once...*'
+    when :emojis
+      event << '**__Emoji Listing__**'
+      event << <<-EMOJIS
+Up-Vote: 👆
+Down-Vote: 👇
+Toxic (Report that hoe): ☢
+Recipro-burst (Admin-only): 🌟
+Super Down-Vote (Admin-only):  📛
+      EMOJIS
+    when :restart
+      event << 'If you insist'
+      $history.delete event.channel.id
+    else
+      $history.delete event.channel.id if ($history[event.channel.id] += 1) == 3
+      event << "I\'m sorry #{event.author.mention}, I can't let you do that..."
+    end
+  else
+  $history[event.channel.id] = 0
   event << <<-INFO
-Aloha compadre!
+***INFIDEL!***
+
+JK! Aloha, **compadre**!
 I suppose you're here to learn about some of my cool features!
-Fortunately for you, ***I DON'T HAVE ANY!***
-Ask my creator for an update.
-No seriously, I'm sick of only having this one message to send...
+Fortunately for you, **I am fully equipped to answer a limited range of 1 word directives!**
+
+```
+backstory
+source
+creator
+emojis
+about
+restart
+```
   INFO
+  end
 }
 
 BOT.command :stats, max_args: 1 do |e, u|
@@ -61,9 +106,11 @@ end
 
 BOT.command :ranks, max_args: 1, usage: '`@Karma ranks [top]`' do |e, top|
   users = Karma.ranking top: (top || 10)
+  e << '***Karma Leaderboard:***'
   users.each_with_index { |u,i|
     e << "#{i+1}:  <@#{u[:id]}>"
   }
+  nil
 end
 
 BOT.command :help do
@@ -75,7 +122,7 @@ BOT.command :author do
 end
 
 BOT.command :source do
-  "~~a dark basement~~\nComing soon to a repo near you!"
+  "~~a dark basement~~\nhttps://github.com/ShadowfeindX/Karma-System"
 end
 
 BOT.command :usage do
