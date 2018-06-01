@@ -3,10 +3,9 @@ module System
   attr_reader :report_emoji
   attr_accessor :roles
 
-  @blacklist = {}
-  @roles = {}
-
   def init
+    @blacklist = {}
+    @roles = {}
     @report_emoji  = '☢'
     @admin_channel = BOT.find_channel 'administration'
   end

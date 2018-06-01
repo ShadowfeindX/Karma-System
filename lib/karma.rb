@@ -25,7 +25,7 @@ module Karma
      prestige: 0,
      upvotes: 3,
      downvotes: 100,
-     streak: 0,
+     streak: -1,
      up_streak: 0,
      down_streak: 0,
      up_bonus: 0,
@@ -62,7 +62,7 @@ module Karma
       user[type] += calc_vote(event, user, type == :upvotes)
     end
 
-    level = Rational(user[:upvotes], user[:downvotes])
+    level = (user[:upvotes] / user[:downvotes]).round(2)
     System.induct event.message.author, 'Karma level up!' if level > 1
 
     user.merge! level: level
@@ -82,6 +82,7 @@ module Karma
     user = @users[event.message.author.id]
     s = user[:streak]
     user[type] -= calc_vote(event, user, type == :upvotes, true)
+    user[:level] = (user[:upvotes] / user[:downvotes]).round(2)
     user[:streak] = s
     user
   end
@@ -100,10 +101,10 @@ module Karma
       if up
         user[:decay] = 0
         i = 1
-        [:positive?, :negative?]
+        [:positive?, :negative?].map(&:to_proc)
       else
         i = -1
-        [:negative?, :positive?]
+        [:negative?, :positive?].map(&:to_proc)
       end
 
     v = Karma.method(up ? :upvotes : :downvotes).(event.message)
@@ -115,15 +116,17 @@ module Karma
     karma_strength = calc_strength event.user
 
     karma_streak = 0
+
+    v -= 1 if undo
     if v == 1 && (sentinel_new === user[:streak])
       karma_streak = user[:streak]
       user[:streak] = user[:streak] + i
     elsif sentinel_flip === user[:streak]
-      user[:streak] = 0
+      user[:streak] = i
     end
 
-    user[:up_streak] = [user[:up_streak], karma_streak].max
-    user[:down_streak] = -[-user[:down_streak], karma_streak].min
+    user[:up_streak] = [user[:up_streak], user[:streak]].max
+    user[:down_streak] = -[-user[:down_streak], user[:streak]].min
 
     bonus = up ? :up_bonus : :down_bonus
     user[bonus] = [user[bonus], karma_bonus].max
@@ -135,10 +138,10 @@ module Karma
     <<-USER
 **Karma Report** for #{member.mention}
 ```
-Karma Level: #{user[:level].to_f.round(2)}
+Karma Level: #{user[:level]}
 Prestige Level: #{user[:prestige]}
 Karma Strength: #{calc_strength member}
-Karma Ranking: #{1 + ranking(find_id: user[:id])}
+Karma Ranking: #{ranking(find_id: user[:id])}
 Total Up-Votes: #{user[:upvotes]}
 Total Down-Votes: #{user[:downvotes]}
 Current Karma Streak: #{user[:streak]}
@@ -152,13 +155,14 @@ Karma Decay Rate: #{user[:decay]}
   end
 
   def stats(member)
-    format_user member, @users[member.id]
+    return format_user member, @users[member.id] if @users[member.id]
+    "No report was found for user: #{member.mention}"
   end
 
   def ranking(top: 10, by: :level, find_id: nil)
     ranked = @users.values.sort_by { |user| user[by] }
-    return ranked.find_index { |user| user[:id] == find_id } if find_id
-    ranked.take top
+    return ranked.size - ranked.find_index { |user| user[:id] == find_id } if find_id
+    ranked.last top
   end
 
   def start_decay
